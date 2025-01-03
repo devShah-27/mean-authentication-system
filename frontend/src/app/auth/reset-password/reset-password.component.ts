@@ -1,28 +1,35 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../auth.service';
+import { FormsModule } from '@angular/forms';
+import { NgIf } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-reset-password',
   standalone: true,
-  imports: [],
+  imports: [FormsModule, NgIf],
   templateUrl: './reset-password.component.html',
   styleUrl: './reset-password.component.scss',
 })
 export class ResetPasswordComponent {
-  token: string = ''; // Variable to store the reset token
-  newPassword: string = ''; // Variable to store the new password
-  errorMessage: string = ''; // Variable to store any error messages
+  token: string = '';
+  newPassword: string = '';
+  errorMessage: string = '';
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private route: ActivatedRoute) {
+    this.route.queryParams.subscribe((params) => {
+      this.token = params['token'];
+    });
+  }
 
   resetPassword() {
-    this.authService.resetPassword(this.token, this.newPassword).subscribe(
-      () => {
+    this.authService.resetPassword(this.token, this.newPassword).subscribe({
+      next: () => {
         this.errorMessage = '';
       },
-      (error: any) => {
+      error: (error: any) => {
         this.errorMessage = error.error;
-      }
-    );
+      },
+    });
   }
 }
