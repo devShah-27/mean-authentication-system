@@ -25,6 +25,10 @@ export class AuthService {
     });
   }
 
+  requestPasswordReset(email: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/request-reset`, { email });
+  }
+
   refreshToken(): Observable<any> {
     const refreshToken = localStorage.getItem('refreshToken');
     return this.http.post<any>(`${this.apiUrl}/refresh-token`, {
