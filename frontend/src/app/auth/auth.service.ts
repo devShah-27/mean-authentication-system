@@ -24,4 +24,18 @@ export class AuthService {
       newPassword,
     });
   }
+
+  refreshToken(): Observable<any> {
+    const refreshToken = localStorage.getItem('refreshToken');
+    return this.http.post<any>(`${this.apiUrl}/refresh-token`, {
+      refreshToken,
+    });
+  }
+
+  logout() {
+    // Clear the local storage and redirect the user to the login page
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    window.location.href = '/login'; // or use the router to navigate
+  }
 }
