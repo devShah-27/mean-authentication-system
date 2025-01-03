@@ -94,4 +94,25 @@ const refresh = async (req, res) => {
   }
 };
 
-module.exports = { register, login, refresh }; // Export the controller functions
+// User logout: Delete the refresh token from the database
+const logout = async (req, res) => {
+  const { refreshToken } = req.body; // Get the refresh token from the request body
+
+  if (!refreshToken) return res.status(400).send("Refresh token is required");
+
+  try {
+    //Find the user based on the refresh token
+    const user = await User.findOne({ refreshToken });
+    if (!user) return res.status(403).send("Invalid refresh token");
+
+    //Invalidate the token by deleting it from the database
+    user.refreshToken = null;
+    await user.save();
+
+    res.status(200).send("User logged out successfully");
+  } catch (err) {
+    res.status(500).send("Error logging out user");
+  }
+};
+
+module.exports = { register, login, refresh, logout }; // Export the controller functions
