@@ -7,10 +7,16 @@ const userSchema = new mongoose.Schema({
     type: String, // The email will be a string
     required: true, // The email is required
     unique: true, //Email should be unique for each user
+    lowercase: true, // Automatically convert email to lowercase
   },
   password: {
     type: String, // The password will be a string
     required: true, // Password is required for authentication
+  },
+  role: {
+    type: String,
+    enum: ["user", "admin"], // Allowed roles
+    default: "user", // Default role
   },
   refreshToken: {
     type: String, // Refresh token will also be a string
