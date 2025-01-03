@@ -6,7 +6,7 @@ const { verifyToken, checkRole } = require("../middleware/authMiddleware"); // I
 //Define the routes for authentication
 router.post("/register", authController.register); // Route for user registration
 router.post("/login", authController.login); // Route for user login
-router.post("/refresh", authController.refresh); // Route for refreshing access token
+router.post("/refresh-token", authController.refresh); // Route for refreshing access token
 router.post("/logout", authController.logout); // Logout user
 router.post("/request-reset", authController.requestPasswordReset); // Route for requesting password reset
 router.post("/reset-password", authController.resetPassword); // Route for resetting password
