@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken"); // Import JWT for generating tokens
 const User = require("../models/user"); // Import the User model
 const dotenv = require("dotenv"); // Import dotenv for environment variables
+const crypto = require("crypto"); // Import crypto for generating random strings
 dotenv.config(); // Load environment variables from .env file
 
 // Function to generate an access token (short-lived)
@@ -115,4 +116,59 @@ const logout = async (req, res) => {
   }
 };
 
-module.exports = { register, login, refresh, logout }; // Export the controller functions
+const requestPasswordReset = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Find the user by email
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).send("User not found");
+
+    //Generate reset token and expiry
+    const resetToken = crypto.randomBytes(32).toString("hex"); // Generate a random string of 32 characters
+    user.resetToken = resetToken; // Store the reset token in the user document
+
+    user.resetTokenExpiry = Date.now() + 3600000; // Set the token expiry to 1 hour from now
+    await user.save();
+
+    // Send the reset token to the user's email (mock implementation)
+    console.log("Password reset token: ", resetToken);
+
+    res.send("Password reset token sent to email");
+  } catch (err) {
+    res.status(500).send("Error requesting password reset");
+  }
+};
+
+const resetPassword = async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  try {
+    // Find the user based on the reset token
+    const user = await User.findOne({
+      resetToken: token,
+      resetTokenExpiry: { $gt: Date.now() }, // Check if the token has expired (1 hour from now)
+    });
+
+    if (!user) return res.status(400).send("Invalid or expired token");
+
+    // Update the user's password and clear the reset token
+    user.password = newPassword;
+    user.resetToken = undefined;
+    user.resetTokenExpiry = undefined;
+    await user.save();
+
+    res.send("Password reset successfully");
+  } catch (err) {
+    res.status(500).send("Error resetting password");
+  }
+};
+
+module.exports = {
+  register,
+  login,
+  refresh,
+  logout,
+  requestPasswordReset,
+  resetPassword,
+}; // Export the controller functions

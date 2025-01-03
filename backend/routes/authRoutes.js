@@ -8,6 +8,8 @@ router.post("/register", authController.register); // Route for user registratio
 router.post("/login", authController.login); // Route for user login
 router.post("/refresh", authController.refresh); // Route for refreshing access token
 router.post("/logout", authController.logout); // Logout user
+router.post("/request-reset", authController.requestPasswordReset); // Route for requesting password reset
+router.post("/reset-password", authController.resetPassword); // Route for resetting password
 
 // Admin-only route
 router.get(
