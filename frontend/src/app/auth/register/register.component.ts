@@ -24,13 +24,13 @@ export class RegisterComponent {
       this.errorMessage = 'Passwords do not match';
       return;
     }
-    this.authService.register(this.email, this.password).subscribe(
-      () => {
-        this.errorMessage = '';
+    this.authService.register(this.email, this.password).subscribe({
+      next: () => {
+        this.errorMessage = ''; // Clear any previous error messages
       },
-      (error: any) => {
-        this.errorMessage = error.error;
-      }
-    );
+      error: (error: any) => {
+        this.errorMessage = error.error; // Display error message from the backend
+      },
+    });
   }
 }
