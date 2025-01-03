@@ -7,7 +7,7 @@ dotenv.config(); // Load environment variables from .env file
 const generateAccessToken = (user) => {
   return jwt.sign(
     { id: user._id, email: user.email }, // Payload: user ID and email
-    process.env.JWT_SECRET, // Secret key for signing the token
+    process.env.ACCESS_TOKEN_SECRET, // Secret key for signing the token
     { expiresIn: "15m" } // Token expiration time (15 minutes)
   );
 };
